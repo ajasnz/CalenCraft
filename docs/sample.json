@@ -1,0 +1,78 @@
+[
+    {
+        "name": "",
+        "source": "",
+        "alter": {
+            "summary": {
+                "replace": "",
+                "prepend": "",
+                "append": ""
+            },
+            "description": {
+                "replace": "",
+                "prepend": "",
+                "append": ""
+            },
+            "location": {
+                "replace": "",
+                "prepend": "",
+                "append": ""
+            }
+        },
+        "include":{
+            "summary": {
+                "contains": "",
+                "regex": "",
+                "equals": ""
+            },
+            "description": {
+                "contains": "",
+                "regex": "",
+                "equals": ""
+            },
+            "location": {
+                "contains": "",
+                "regex": "",
+                "equals": ""
+            }
+        }
+    },
+    {
+        "name": "",
+        "source": "",
+        "alter": {
+            "summary": {
+                "replace": "",
+                "prepend": "",
+                "append": ""
+            },
+            "description": {
+                "replace": "",
+                "prepend": "",
+                "append": ""
+            },
+            "location": {
+                "replace": "",
+                "prepend": "",
+                "append": ""
+            }
+        },
+        "include":{
+            "summary": {
+                "contains": "",
+                "regex": "",
+                "equals": ""
+            },
+            "description": {
+                "contains": "",
+                "regex": "",
+                "equals": ""
+            },
+            "location": {
+                "contains": "",
+                "regex": "",
+                "equals": ""
+            }
+        }
+    }
+]
