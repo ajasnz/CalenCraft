@@ -35,6 +35,14 @@
                 "regex": "",
                 "equals": ""
             }
+        },
+        "datestamp": {
+            "dateformat": "YYYY-MM-DD HH:mm:ss",
+            "stamptemplate": "Event last updated: [[date]]",
+            "stampposition": "prepend"
+        },
+        "conf": {
+            
         }
     },
     {

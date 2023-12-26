@@ -12,8 +12,7 @@ def main(calId):
         appResponse.headers["Content-Type"] = "text/calendar; charset=utf-8"
     except FileNotFoundError:
         appResponse = make_response("This calendar does not exist", 404)
-    return appResponse
-  
+    return appResponse 
       
 
 
