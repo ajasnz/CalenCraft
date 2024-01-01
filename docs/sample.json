@@ -35,6 +35,28 @@
                 "regex": "",
                 "equals": ""
             }
+        },
+        "exclude":{
+            "summary": {
+                "contains": "",
+                "regex": "",
+                "equals": ""
+            },
+            "description": {
+                "contains": "",
+                "regex": "",
+                "equals": ""
+            },
+            "location": {
+                "contains": "",
+                "regex": "",
+                "equals": ""
+            }
+        },
+        "datestamp": {
+            "dateformat": "%Y-%m-%d %H:%M:%S",
+            "stamptemplate": "Event last fetched from origin: [[date]]",
+            "stampposition": "prepend"
         }
     },
     {
