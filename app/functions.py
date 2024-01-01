@@ -22,55 +22,27 @@ def start_build(calId):
     except FileNotFoundError:
         raise FileNotFoundError("This calendar does not exist")
     for calConfig in baseConfig:
-        #FIXME Include and Exclude filters currently break everything, strip these from any config
-        if True:
-            if "include" in calConfig:
-                del calConfig["include"]
-            if "exclude" in calConfig:
-                del calConfig["exclude"]
         sourceCal = fetch_origin(calConfig["source"])
+        
         if "datestamp" in calConfig:
-            currentTime = datetime.datetime.now().strftime(
-                calConfig["datestamp"]["dateformat"]
-            )
-            dateStamp = str(calConfig["datestamp"]["stamptemplate"]).replace(
-                "[[date]]", currentTime
-            )
-
-            if "alter" not in calConfig:
-                calConfig["alter"] = {}
-            if "description" not in calConfig["alter"]:
-                calConfig["alter"]["description"] = {}
-            if calConfig["datestamp"]["stampposition"] == "prepend":
-                if "prepend" not in calConfig["alter"]["description"]:
-                    calConfig["alter"]["description"]["prepend"] = ""
-                calConfig["alter"]["description"]["prepend"] = (
-                    dateStamp + calConfig["alter"]["description"]["prepend"]
-                )
-            elif (
-                calConfig["datestamp"]["stampposition"] == "append" or True
-            ):  # make this the default position
-                if "append" not in calConfig["alter"]["description"]:
-                    calConfig["alter"]["description"]["append"] = ""
-                calConfig["alter"]["description"]["append"] = (
-                    calConfig["alter"]["description"]["append"] + dateStamp
-                )
-
-        if "include" in calConfig or "exclude" in calConfig:
-            sourceCal = filter_calendar(
-                sourceCal,
-                includes=calConfig.get("include", None),
-                excludes=calConfig.get("exclude", None),
-                alterations=calConfig.get("alter", None),
-            )  # To prevent double handling of alterations, we pass the alterations to the include filter
-        elif (
-            "alter" in calConfig
-            and "include" not in calConfig
-            and "exclude" not in calConfig
-        ):  # if there is an include filter, events are altered at inclusion, so we don't want to do it again
-            sourceCal = alter_calendar(sourceCal, calConfig["alter"])
-
-        mergeCal = merge_calendars(mergeCal, sourceCal)
+            dateStamp = str(calConfig["datestamp"]["stamptemplate"]).replace("[[date]]", datetime.datetime.now().strftime(calConfig["datestamp"]["dateformat"]))
+        else:
+            dateStamp = None
+        newCal = Calendar()
+        for event in sourceCal.walk():
+            if "include" in calConfig or "exclude" in calConfig:
+                event = filter_event(event, includes=calConfig.get("include", False), excludes=calConfig.get("exclude", False))
+            if event is None:
+                continue
+            if "alter" in calConfig:
+                event = alter_event(event, calConfig["alter"])
+            if dateStamp != None:
+                if calConfig["datestamp"]["stampposition"] == "prepend":
+                    event["description"] = dateStamp + "\n\n" + event.get("description", "")
+                else:
+                    event["description"] = event.get("description","") + "\n\n" + dateStamp
+            newCal.add_component(event)
+        mergeCal = merge_calendars(mergeCal, newCal)
     return mergeCal.to_ical()
 
 
@@ -88,14 +60,6 @@ def merge_calendars(mergeCal, sourceCal):
             mergeCal.add_component(component)
 
     return mergeCal
-
-
-# handle alterations for calendar
-def alter_calendar(sourceCal, alterations):
-    for event in sourceCal.walk():
-        event = alter_event(event, alterations)
-    return sourceCal
-
 
 # handle alterations for a single event
 def alter_event(event, alterations):
@@ -116,23 +80,15 @@ def alter_event(event, alterations):
     return event
 
 
-# filters
-def filter_calendar(calendar, **kwargs):
-    filteredCal = Calendar()
-    for event in calendar.walk():
-        filteredEvent = filter_event(event, **kwargs)
-        if filteredEvent is not None:
-            filteredCal.add_component(filteredEvent)
-
-
+# handle includes and excludes for a single event
 def filter_event(event, **kwargs):
     doIncludeEvent = False
     try:
-        if "includes" in kwargs and kwargs["includes"] is not None:
+        if "includes" in kwargs and kwargs["includes"] is not False:
             includes = kwargs["includes"]
             for property in includes:
                 if "contains" in includes[property]:
-                    print(includes[property]["contains"] in event[property])
+                    print(f"Checking if {includes[property]['contains']} is in {event[property]}: {includes[property]['contains'] in event[property]}")
                     if includes[property]["contains"] in event[property]:
                         doIncludeEvent = True
                         break
@@ -144,26 +100,30 @@ def filter_event(event, **kwargs):
                     if event[property] == includes[property]["equals"]:
                         doIncludeEvent = True
                         break
-        if "excludes" in kwargs and kwargs["excludes"] is not None:
+        if "excludes" in kwargs and kwargs["excludes"] is not False:
             excludes = kwargs["excludes"]
             for property in excludes:
                 if "contains" in excludes[property]:
                     if excludes[property]["contains"] in event[property]:
                         doIncludeEvent = False
                         break
+                    else:
+                        doIncludeEvent = True
                 if "regex" in excludes[property]:
                     if re.search(excludes[property]["regex"], event[property]):
                         doIncludeEvent = False
                         break
+                    else:
+                        doIncludeEvent = True
                 if "equals" in excludes[property]:
                     if event[property] == excludes[property]["equals"]:
                         doIncludeEvent = False
                         break
+                    else:
+                        doIncludeEvent = True
     except KeyError:
         pass
     if doIncludeEvent:
-        if "alterations" in kwargs and kwargs["alterations"] is not None:
-            event = alter_event(event, kwargs["alterations"])
         return event
     else:
         return None

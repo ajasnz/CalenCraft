@@ -3,8 +3,7 @@
 
 ## Some things don't work yet...
 ### Like:
-- Include filters
-- Exclude filters
+
 
 ## And some things are not tested...
 ### Like:
@@ -25,9 +24,6 @@ This script will combine multiple ics feeds into one feed.
 4. The script will return a combined ics file
 
 ## Configuration file
-> ***IMPORTANT:*** The use of an include or exclude filter will currently break everything. This will (hopefully) be fixed in the future
-
-
 There is a sample configuration file in the `docs` folder. The completed configuration file should be saved in `/config/` as a `.json` file. The fields are as follows:
 Items marked with a `*` are required.
 - `name`*: The name of the calendar (currently only for your reference)
@@ -104,10 +100,10 @@ Repeat this JSON set for as many calenders as you want to combine.
 # Roadmap
 - [x] Combine multiple ics files into one
 - [x] Alter core event properties
-- [_] Filter events
+- [x] Filter events
 - [x] Add datestamp to events
-- [_] Add caching
-- [_] Allow altering transparancy
-- [_] Allow adding/updating config files via web
-- [_] Add an ICS viewer
+- [ ] Add caching
+- [ ] Allow altering transparancy
+- [ ] Allow adding/updating config files via web
+- [ ] Add an ICS viewer
 
