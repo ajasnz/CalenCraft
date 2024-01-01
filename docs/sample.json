@@ -36,13 +36,27 @@
                 "equals": ""
             }
         },
-        "datestamp": {
-            "dateformat": "YYYY-MM-DD HH:mm:ss",
-            "stamptemplate": "Event last updated: [[date]]",
-            "stampposition": "prepend"
+        "exclude":{
+            "summary": {
+                "contains": "",
+                "regex": "",
+                "equals": ""
+            },
+            "description": {
+                "contains": "",
+                "regex": "",
+                "equals": ""
+            },
+            "location": {
+                "contains": "",
+                "regex": "",
+                "equals": ""
+            }
         },
-        "conf": {
-            
+        "datestamp": {
+            "dateformat": "%Y-%m-%d %H:%M:%S",
+            "stamptemplate": "Event last fetched from origin: [[date]]",
+            "stampposition": "prepend"
         }
     },
     {
