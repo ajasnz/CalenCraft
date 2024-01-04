@@ -1,100 +1,114 @@
-[
-    {
-        "name": "",
-        "source": "",
-        "alter": {
-            "summary": {
-                "replace": "",
-                "prepend": "",
-                "append": ""
-            },
-            "description": {
-                "replace": "",
-                "prepend": "",
-                "append": ""
-            },
-            "location": {
-                "replace": "",
-                "prepend": "",
-                "append": ""
-            }
-        },
-        "include":{
-            "summary": {
-                "contains": "",
-                "regex": "",
-                "equals": ""
-            },
-            "description": {
-                "contains": "",
-                "regex": "",
-                "equals": ""
-            },
-            "location": {
-                "contains": "",
-                "regex": "",
-                "equals": ""
-            }
-        },
-        "exclude":{
-            "summary": {
-                "contains": "",
-                "regex": "",
-                "equals": ""
-            },
-            "description": {
-                "contains": "",
-                "regex": "",
-                "equals": ""
-            },
-            "location": {
-                "contains": "",
-                "regex": "",
-                "equals": ""
-            }
-        },
+{
+    "cc_configuration": {
+         "key": "value",
+         "allowWeb": "true",
+         "version": "1.0"
+     },
+    "ics1name": {
+        "source":"",
         "datestamp": {
-            "dateformat": "%Y-%m-%d %H:%M:%S",
-            "stamptemplate": "Event last fetched from origin: [[date]]",
-            "stampposition": "prepend"
-        }
-    },
-    {
-        "name": "",
-        "source": "",
+            "format": "%Y-%m-%d %H:%M:%S",
+            "template": "Event last updated: [[date]]",
+            "position": "prepend"
+        },
         "alter": {
-            "summary": {
-                "replace": "",
+            "summary":{
                 "prepend": "",
-                "append": ""
+                "append": "",
+                "replace": "",
+                "partReplace": {
+                    "search": "",
+                    "replace": ""
+                }
             },
-            "description": {
-                "replace": "",
+            "description":{
                 "prepend": "",
-                "append": ""
+                "append": "",
+                "replace": "",
+                "partReplace": {
+                    "search": "",
+                    "replace": ""
+                }
             },
-            "location": {
-                "replace": "",
+            "location":{
                 "prepend": "",
-                "append": ""
+                "append": "",
+                "replace": "",
+                "partReplace": {
+                    "search": "",
+                    "replace": ""
+                }
             }
         },
-        "include":{
+        "include": {
             "summary": {
                 "contains": "",
-                "regex": "",
-                "equals": ""
+                "equals": "",
+                "regex": ""
             },
             "description": {
-                "contains": "",
-                "regex": "",
-                "equals": ""
+               "contains": "",
+               "equals": "",
+               "regex": ""
             },
             "location": {
-                "contains": "",
-                "regex": "",
-                "equals": ""
+               "contains": "",
+               "equals": "",
+               "regex": ""
             }
-        }
+        },
+        "exclude": {
+            "summary": {
+                "contains": "",
+                "equals": "",
+                "regex": ""
+            },
+            "description": {
+               "contains": "",
+               "equals": "",
+               "regex": ""
+            },
+            "location": {
+               "contains": "",
+               "equals": "",
+               "regex": ""
+            }
+        },
+        "alterRules": [
+            {
+                "property": "",
+                "matchType": "",
+                "matchPattern": "",
+                "alter": {
+                    "summary":{
+                        "prepend": "",
+                        "append": "",
+                        "replace": "",
+                        "partReplace": {
+                            "search": "",
+                            "replace": ""
+                        }
+                    },
+                    "description":{
+                        "prepend": "",
+                        "append": "",
+                        "replace": "",
+                        "partReplace": {
+                            "search": "",
+                            "replace": ""
+                        }
+                    },
+                    "location":{
+                        "prepend": "",
+                        "append": "",
+                        "replace": "",
+                        "partReplace": {
+                            "search": "",
+                            "replace": ""
+                        }
+                    }
+                }
+            }
+        ]  
     }
-]
+}

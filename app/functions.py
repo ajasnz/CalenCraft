@@ -1,6 +1,3 @@
-# TODO test include filters
-# TODO test exclude filters
-
 import json, requests
 from icalendar import Calendar, Event
 import regex as re
@@ -21,28 +18,32 @@ def start_build(calId):
 
     except FileNotFoundError:
         raise FileNotFoundError("This calendar does not exist")
-    for calConfig in baseConfig:
-        sourceCal = fetch_origin(calConfig["source"])
-        
-        if "datestamp" in calConfig:
-            dateStamp = str(calConfig["datestamp"]["stamptemplate"]).replace("[[date]]", datetime.datetime.now().strftime(calConfig["datestamp"]["dateformat"]))
-        else:
-            dateStamp = None
-        newCal = Calendar()
-        for event in sourceCal.walk():
-            if "include" in calConfig or "exclude" in calConfig:
-                event = filter_event(event, includes=calConfig.get("include", False), excludes=calConfig.get("exclude", False))
-            if event is None:
-                continue
-            if "alter" in calConfig:
-                event = alter_event(event, calConfig["alter"])
-            if dateStamp != None:
-                if calConfig["datestamp"]["stampposition"] == "prepend":
-                    event["description"] = dateStamp + "\n\n" + event.get("description", "")
-                else:
-                    event["description"] = event.get("description","") + "\n\n" + dateStamp
-            newCal.add_component(event)
-        mergeCal = merge_calendars(mergeCal, newCal)
+    for name, calConfig in baseConfig.items():
+        if name != "cc_configuration":
+            sourceCal = fetch_origin(calConfig["source"])
+            
+            if "datestamp" in calConfig:
+                dateStamp = str(calConfig["datestamp"]["template"]).replace("[[date]]", datetime.datetime.now().strftime(calConfig["datestamp"]["format"]))
+            else:
+                dateStamp = None
+            newCal = Calendar()
+            for event in sourceCal.walk():
+                if "include" in calConfig or "exclude" in calConfig:
+                    event = filter_event(event, includes=calConfig.get("include", False), excludes=calConfig.get("exclude", False))
+                if event is None:
+                    continue
+                if "alter" in calConfig:
+                    event = alter_event(event, calConfig["alter"])
+                if "alterRules" in calConfig:
+                    for ruleSet in calConfig["alterRules"]:
+                        process_alter_rule(event, ruleSet)
+                if dateStamp != None:
+                    if calConfig["datestamp"]["position"] == "prepend":
+                        event["description"] = dateStamp + "\n\n" + event.get("description", "")
+                    else:
+                        event["description"] = event.get("description","") + "\n\n" + dateStamp
+                newCal.add_component(event)
+            mergeCal = merge_calendars(mergeCal, newCal)
     return mergeCal.to_ical()
 
 
@@ -68,12 +69,19 @@ def alter_event(event, alterations):
         try:
             if "replace" in alterations[property]:
                 event[property] = alterations[property]["replace"]
+            if "partReplace" in alterations[property]:
+                value = event[property] if property in event else ""
+                event[property] = value.replace(
+                    alterations[property]["partReplace"]["search"],
+                    alterations[property]["partReplace"]["replace"]
+                )    
             if "prepend" in alterations[property]:
                 value = event[property] if property in event else ""
                 event[property] = alterations[property]["prepend"] + value
             if "append" in alterations[property]:
                 value = event[property] if property in event else ""
                 event[property] = value + alterations[property]["append"]
+                
         except KeyError:
             pass
 
@@ -88,11 +96,11 @@ def filter_event(event, **kwargs):
             includes = kwargs["includes"]
             for property in includes:
                 if "contains" in includes[property]:
-                    print(f"Checking if {includes[property]['contains']} is in {event[property]}: {includes[property]['contains'] in event[property]}")
                     if includes[property]["contains"] in event[property]:
                         doIncludeEvent = True
                         break
                 if "regex" in includes[property]:
+                    
                     if re.search(includes[property]["regex"], event[property]):
                         doIncludeEvent = True
                         break
@@ -127,3 +135,19 @@ def filter_event(event, **kwargs):
         return event
     else:
         return None
+    
+def process_alter_rule(event, ruleset):
+    if ruleset["property"] in event:
+        doProcessRule = False
+        if ruleset["matchType"] == "contains":
+            if ruleset["matchPattern"] in event[ruleset["property"]]:
+                doProcessRule = True
+        elif ruleset["matchType"] == "equals":
+            if ruleset["matchPattern"] == event[ruleset["property"]]:
+                doProcessRule = True
+        elif ruleset["matchType"] == "regex":
+            if re.search(ruleset["matchPattern"], event[ruleset["property"]]):
+                doProcessRule = True
+
+        if doProcessRule:
+            alter_event(event, ruleset["alter"])  
