@@ -28,7 +28,7 @@ Each source calendar you want to merge should then be provided as a dictionary, 
         - `template`: The datestamp string you want shown, add `[[date]]` where you want the current date/time inserted
         - `position`: Where the datestamp should be inserted (in the description). Permitted values are `append` (default) or `prepend`
     - `alter`: This allows you to modify the properties of all events in the source calendar, this should be a dictionary containing a sub-dictionary for each property you want to modify. You may specify multiple alterations on one property
-        - `*property name*`: The name of the property you want to modify, currently accepted values are `summary`, `description`, and `location`
+        - `*property name*`: The name of the property you want to modify, currently accepted values are `summary`, `description`, `location`, or `availability`. If altering availability see additional requirements and properties below.
             - `prepend`: A string to prepend to the selected property
             - `append`: A string to append to the selected property
             - `replace`: Replace the entire property with the value specified (the value may be left blank to redact that property)
@@ -46,10 +46,15 @@ Each source calendar you want to merge should then be provided as a dictionary, 
         - `matchPattern`: The pattern or string to match against
         - `alter`: The alterations to make to the events that meet the criteria above. This should use the same syntax as the `alter` configurations above
 
+### Availability configuration
+Availability takes a dictionary with the following keys, each key is optional:
+- `transp`: The transparency of the event, currently accepted values are `transparent` and `opaque`. This determines whether the vent will be considered in free/busy calculations by the client
+- `fbtype`: The type of free/busy information to provide, currently accepted values are `free`, `busy`, `busy-unavailable`, and `busy-tentative`. This will also set Microsoft's proprietary fields.
 
 
 ### Full sample config (all parameters)
 <pre><code>{
+    {
     "cc_configuration": {
          "key": "value",
          "allowWeb": "true",
@@ -89,6 +94,10 @@ Each source calendar you want to merge should then be provided as a dictionary, 
                     "search": "",
                     "replace": ""
                 }
+            },
+            "availability":{
+                "transp": "",
+                "fbtype": ""
             }
         },
         "include": {
@@ -162,6 +171,7 @@ Each source calendar you want to merge should then be provided as a dictionary, 
             }
         ]  
     }
+}
 }</code></pre>
 
 # Other funtionality
@@ -180,8 +190,9 @@ Each source calendar you want to merge should then be provided as a dictionary, 
 - [x] Filter events
 - [x] Add datestamp to events
 - [ ] Add caching
-- [ ] Allow altering transparancy
-- [ ] (in progress) Allow adding/updating config files via web
+- [x] Allow altering transparancy
+- [x] Allow altering free/busy type
+- [ ] Allow adding/updating config files via web
 - [ ] Add an ICS viewer
 - [x] Add ability to specify alter rules on a per-event basis
 - [ ] Add env variables for configuration

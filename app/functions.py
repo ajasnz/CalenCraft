@@ -81,6 +81,15 @@ def alter_event(event, alterations):
             if "append" in alterations[property]:
                 value = event[property] if property in event else ""
                 event[property] = value + alterations[property]["append"]
+            if property == "availability":
+                if "transp" in alterations[property]:
+                    event["transp"] = str(alterations[property]["transp"]).upper()
+                if "fbtype" in alterations[property]:
+                    event["fbtype"] = str(alterations[property]["fbtype"]).upper()
+                    try:
+                        event["x-microsoft-cdo-intendedstatus"] = alterations[property]["fbtype"]
+                    except KeyError:
+                        pass
                 
         except KeyError:
             pass
