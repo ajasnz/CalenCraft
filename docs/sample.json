@@ -38,6 +38,10 @@
                     "search": "",
                     "replace": ""
                 }
+            },
+            "availability":{
+                "transp": "",
+                "fbtype": ""
             }
         },
         "include": {
