@@ -1,8 +1,6 @@
 {
     "cc_configuration": {
-         "key": "value",
-         "allowWeb": "true",
-         "version": "1.0"
+         "cache": 0
      },
     "ics1name": {
         "source":"",
@@ -46,8 +44,8 @@
         },
         "include": {
             "summary": {
-                "contains": "",
-                "equals": "",
+                "contains": ["va", "vb"],
+                "equals": {"default": []},
                 "regex": ""
             },
             "description": {
