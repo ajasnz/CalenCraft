@@ -18,8 +18,8 @@ By default, the application will be accessible on port 8088.
 
 #### Global configuration
 Some configuration options can be set globally via environment variables, these are:
-- `cc_enable_contexts`: Whether to allow context-specific configuration files to be used. This should be set to `true` or `false` and defaults to `true`. Setting to false will disable all contexts, setting to true will only enable contexts if they are enabled in the configuration file. Contexts will only work if `cc_use_ics_path` is set to `true`.
-- `cc_enable_ics_path`: Whether to allow calendars to be accessed at https://example.com/ics/calendar if this is set to false, calendars will be accessible at https://example.com/calendar. This should be set to `true` or `false` and defaults to `true`. This is included for backwards compatibility with previous versions, disabling this may cause issues if a calendar config shares it's name with a defined path.
+- `cc_enable_non_ics_path`: Whether to allow calendars to be accessed at https://example.com/calendar if this is set to true, calendars will be accessible at https://example.com/calendar. This should be set to `true` or `false` and defaults to `false`. This is included for backwards compatibility with previous versions, enabling this may cause issues if a calendar config shares it's name with a defined path.
+- `cc_enable_caching`: Whether to enable caching of the combined ics file. This should be set to `true` or `false` and defaults to `true`
 
 
 ## Usage
@@ -154,9 +154,9 @@ Contexts are currently only suupported for the following parts of a configuratio
 
 
 ## Possible URL formats
-- `https://example.com/calendar`: This format has been superceded by default, but can be enabked by setting the `cc_enable_ics_path` environment variable to `true`. This format does not support contexts, and will be removed in a future version.
+- `https://example.com/calendar`: This format has been superceded by default, but can be enabked by setting the `cc_enable_non_ics_path` environment variable to `true`. This format does not support contexts, and will be removed in a future version.
 - `https://example.com/ics/calendar`: This format is the default and will work for all configurations
-- ~~`https://example.com/ics/context/calendar`: This format will only work if contexts are enabled in the configuration file and the `cc_enable_contexts` environment variable is set to `true`~~
+- `https://example.com/ics/context/calendar`: This format will only work if contexts are enabled in the configuration file and the `cc_enable_contexts` environment variable is set to `true`
 
 ## Environment variables
 Some configuration options can be set globally via environment variables, these are:
@@ -181,12 +181,12 @@ CalenCraft currently supports basic caching of the combined ics file ON REQUESTS
 - [ ] Allow adding/updating config files via web
 - [ ] Add an ICS viewer
 - [x] Add ability to specify alter rules on a per-event basis
-- [ ] Add env variables for configuration
+- [x] Add env variables for configuration
 - [ ] Better (or any) error handling
 - [x] Allow partial replaces in alter
 - [ ] Configuration generator
 - [ ] Improved web interface and security
-- [ ] Add ability to specify multiple contexts for a single calendar
+- [x] Add ability to specify multiple contexts for a single calendar
 - [ ] Add context support for include/exclude
 - [ ] Add scheduled cache updates
 - [ ] Source calendar caching
