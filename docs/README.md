@@ -163,7 +163,9 @@ CalenCraft contains a basis calendar viewer which can be accessed by swapping `/
 
 ## Possible URL formats
 - `https://example.com/calendar`: This format has been superceded by default, but can be enabked by setting the `cc_enable_non_ics_path` environment variable to `true`. This format does not support contexts, and will be removed in a future version.
+- `https://example.com/calendar`: This format has been superceded by default, but can be enabked by setting the `cc_enable_non_ics_path` environment variable to `true`. This format does not support contexts, and will be removed in a future version.
 - `https://example.com/ics/calendar`: This format is the default and will work for all configurations
+- `https://example.com/ics/context/calendar`: This format will only work if contexts are enabled in the configuration file and the `cc_enable_contexts` environment variable is set to `true`
 - `https://example.com/ics/context/calendar`: This format will only work if contexts are enabled in the configuration file and the `cc_enable_contexts` environment variable is set to `true`
 
 ## Environment variables
@@ -192,6 +194,7 @@ CalenCraft currently supports basic caching of the combined ics file ON REQUESTS
 - [ ] Allow adding/updating config files via web
 - [x] Add an ICS viewer
 - [x] Add ability to specify alter rules on a per-event basis
+- [x] Add env variables for configuration
 - [x] Add env variables for configuration
 - [ ] Better (or any) error handling
 - [x] Allow partial replaces in alter
