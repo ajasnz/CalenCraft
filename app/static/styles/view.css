@@ -1,0 +1,233 @@
+:root{
+    --background-color: #fff;
+    --primary-color: #86b0ff;
+    --secondary-color: #16a085;
+    --action-color: #2980b9;
+    --dark-color: #000;
+    --light-color: #fff;
+    --small-radius: 20px;
+
+}
+body{
+    margin:0;
+    padding:0;
+    background-color: var(--background-color);
+    font-family: sans-serif;
+    color: var(--dark-color);
+}
+#pageContainer{
+    width:100vw;
+    height:100vh;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+header{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 50px;
+    background-color: var(--background-color);
+    flex-wrap: wrap;
+    padding: 0px 20px;
+    margin-bottom: 10px;
+    flex: 0 0 auto;
+    box-shadow: 5px 5px 5px #ddd;
+
+}
+#calendarSubscribeButton{
+    text-decoration: none;
+    color: var(--secondary-color);
+    font-size: 1.2em;
+    padding: 10px;
+    border-radius: var(--small-radius);
+    border: 2px solid var(--secondary-color);
+    background-color: var(--light-color);
+}
+#calendarSubscribeButton:hover{
+    background-color: var(--action-color);
+    color: var(--light-color);
+}
+button{
+    font-size: 1.2em;
+}
+#calendarActions{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 50px;
+    background-color: var(--background-color);
+    flex-wrap: wrap;
+    padding: 0px 20px;
+  flex: 0 0 auto;
+}
+#calendarActions > *{
+  color: var(--dark-color);
+}
+#calendarTitleNarrow{
+    display: none;
+}
+@media (max-width: 600px) {
+  #calendarActions {
+    justify-content: center;
+  }
+  #calendarActions > *{
+    margin: 15px;
+  }
+  #calendarTitleWide{
+    display:none;
+  }
+  #calendarTitleNarrow{
+    display: block;
+    width: 100%;
+    text-align: center;
+  }
+}
+.calendarActionSet{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    width: fit-content;
+    margin: 5px;
+
+}
+#calendarActionSetViews{
+    border: 2px solid var(--secondary-color);
+    border-radius: 5px;
+}
+.calendarActionChangeView{
+  border: none;
+  background-color: inherit;
+  font-size: 1.2em;
+  padding: 10px;
+  width: 50%;
+  color: var(--secondary-color);
+}
+.calendarActionChangeView:hover{
+  background-color: var(--action-color);
+  color: var(--light-color);
+
+}
+.calendarActionChangeViewIsActive{
+  background-color: var(--secondary-color);
+  color: var(--light-color);
+}
+.PeriodButton{
+  width: auto;
+  margin:0;
+  background-color: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 1000px;
+  margin: 5px;
+  border-color: var(--secondary-color);
+  border-style: solid;
+  border-width: 3px;
+}
+.buttonPeriodIcon{
+  position: relative;
+  top: .1em;
+  padding:0px 5px;
+  color: var(--secondary-color);
+}
+.PeriodButton:hover{
+background-color: var(--action-color);
+
+}
+.PeriodButton:hover >*{
+  color: var(--light-color);
+}
+#tuiCalendar{
+    height: 600px;
+    flex: 1 1 auto;
+}
+footer{
+    flex: 0 0 auto;
+}
+
+.isLoading{
+  filter: blur(5px);
+  z-index: 0;
+  pointer-events: none;
+}
+.loader{
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+.loaderText{
+  margin-top:20px;
+  font-weight: bold;
+}
+.loaderSpinner{
+  font-size: 5em;
+  min-height: 150px;
+  min-width: 150px;
+  color: var(--secondary-color);
+  animation: spin 2s linear infinite;
+  border-top: 5px solid var(--primary-color);
+  border-bottom: 5px solid var(--secondary-color);
+  border-radius: 1000px;
+}
+.loaderSpinnerInner{
+  animation: spin 2s linear infinite reverse;
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+  
+}
+
+#errorDialog{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  border-radius: 20px;
+  border: 0;
+  max-width: 90vw;
+  max-height: 75vw;
+  overflow: hidden;
+}
+#errorIcon{
+  font-size: 10em;
+}
+#errorText{
+  font-weight: bold;
+  max-width: 80%;
+}
+#errorAction{
+  border-radius: var(--small-radius);
+  padding: 10px;
+  border-color: var(--primary-color);
+  border-width: 2px;
+  background-color: var(--light-color);
+  font-weight: bold;
+}
+
+#errorAction:hover{
+  background-color: var(--action-color);
+}

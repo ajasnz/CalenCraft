@@ -1,9 +1,12 @@
-from flask import Flask, make_response, jsonify, request
+from flask import Flask, make_response, jsonify, request, render_template
 from functions import get_ics
-import os
+import os, jinja2
+
+os.environ["CC_BASE_URL"] = os.getenv("CC_BASE_URL", "")
+os.environ["CC_ENABLE_NON_ICS_PATH"] = os.getenv("CC_ENABLE_NON_ICS_PATH", "false")
+os.environ["CC_ENABLE_CACHING"] = os.getenv("CC_ENABLE_CACHING", "true")
 
 app = Flask(__name__)
-
 
 # Custom decorator to enable/disable routes based on environment variables
 def conditional_route(envVar, targetRoutes=[]):
@@ -34,8 +37,8 @@ def serve_ics(calId, context=None):
             "attachment; filename=" + calId + ".ics"
         )
         appResponse.headers["Content-Type"] = "text/calendar; charset=utf-8"
-    except FileNotFoundError:
-        appResponse = make_response("This calendar does not exist", 404)
+    except FileNotFoundError as e:
+        appResponse = make_response("An error occured: " + str(e), 404)
     return appResponse
 
 
@@ -43,7 +46,27 @@ def serve_ics(calId, context=None):
 @app.route("/view/<calId>")
 @app.route("/view/<context>/<calId>")
 def view_ics(calId, context=None):
-    return
+    calendarPath = calId if context is None else context + "/" + calId
+    pageData={
+        "calendarName": calId,
+        "calendarId": calId,
+        "calendarContext": context,
+        "allowSubscribe": True,
+        "calendarSubscribeLink": os.getenv("CC_BASE_URL") + "/ics/" + calendarPath
+    }
+    return render_template("view.html", **pageData)
+
+# API
+@app.route("/api/web-cal/get/<calId>")
+@app.route("/api/web-cal/get/<context>/<calId>")
+def api_web_get(calId, context=None):
+    try:
+        resultCal = get_ics(calId, context, format="tui")
+        appResponse = make_response(resultCal, 200)
+        appResponse.headers["Content-Type"] = "text/json; charset=utf-8"
+    except FileNotFoundError as e:
+        appResponse = make_response("An error occured: " + str(e), 404)
+    return appResponse
 
 
 app.run(host="0.0.0.0", port=8088)

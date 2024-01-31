@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View {{calendarId}} | Calencraft</title>
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/view.css') }}">
+    <link rel="stylesheet" type="text/css" href="../static/styles/view.css">
+
+    <!-- TOAST UI Calendar Import -->
+    <link rel="stylesheet" href="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.css" />
+    <script src="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.js"></script>
+</head>
+
+<body>
+    <div class="container isLoading" id="pageContainer">
+        <header class="fullWidth" id="pageHeader">
+            <h2>{{ calendarName }}</h2>
+            {% if allowSubscribe  == True %}
+                <a id="calendarSubscribeButton" class="PeriodButton PeriodButtonRound" href="webcal://{{calendarSubscribeLink}}"><svg class="with-icon_icon__MHUeb" data-testid="geist-icon" fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24" style="color:var(--geist-foreground);width:24px;height:24px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>Subscribe</a>
+                {% endif %}
+        </header>
+            <nav class="fullWidth" id="calendarActions">
+                <div class="calendarActionSet" id="calendarActionSetViews">
+                    <button class="calendarActionChangeView" id="calendarActionChangeViewDay"
+                        onclick="changeCalendarView('day', 'calendarActionChangeViewDay')" title="Day view">Day</button>
+                    <button class="calendarActionChangeView" id="calendarActionChangeViewWeek"
+                        onclick="changeCalendarView('week', 'calendarActionChangeViewWeek')" title="Week View">Week</button>
+                    <button class="calendarActionChangeView calendarActionChangeViewIsActive" id="calendarActionChangeViewMonth"
+                        onclick="changeCalendarView('month', 'calendarActionChangeViewMonth')" title="Month View">Month</button>
+                </div>
+                <div class="calendarActionSet" id="calendarActionSetPeriod">
+                    <button class="calendarActionChangePeriod PeriodButton PeriodButtonRound" id="calendarActionChangePeriodPrev"
+                        onclick="changeCalendarPeriod('previous', 'calendarActionChangePeriodPrev')" title="Previous Period"><span class="buttonPeriodIcon"><svg class="with-icon_icon__MHUeb" data-testid="geist-icon" fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24" style="color:var(--geist-foreground);width:24px;height:24px"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" fill="var(--geist-fill)"/><path d="M13 8l-4 4 4 4" stroke="var(--geist-stroke)" fill="none"/></svg> </span></button>
+                    <button class="calendarActionChangePeriod PeriodButton PeriodButtonRound" id="calendarActionChangePeriodNext"
+                        onclick="changeCalendarPeriod('next', 'calendarActionChangePeriodNext')" title="Next Period"><span class="buttonPeriodIcon buttonPeriodIconRight"><svg class="with-icon_icon__MHUeb" data-testid="geist-icon" fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" style="color:var(--geist-foreground);"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" fill="var(--geist-fill)"/><path d="M11 16l4-4-4-4" stroke="var(--geist-stroke)" fill="none"/></svg></span></button>
+                </div>
+            </nav>
+            <div id="tuiCalendar"></div>
+    </div>
+    <div class="loader" id="pageLoader">
+        <div class="loaderSpinner">
+            <div class="loaderSpinnerInner">📅</div>
+        </div>
+        <div class="loaderText">Loading Calendar</div>
+
+    </div>
+    <dialog id="errorDialog">
+        <div id="errorIcon">⚠️</div>
+        <p id="errorText">An unknown error occured loading this calendar</p>
+        <button id="errorAction" onclick=""></button>
+    </dialog>
+    <script src="../static/js/view.js"></script>
+    <script src="{{ url_for('static',filename='js/view.js') }}"></script>
+    <script>loadCalendarEvents("{{ calendarId }}", "{{ calendarContext }}")</script>
+</body>
+</html>

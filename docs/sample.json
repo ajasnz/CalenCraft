@@ -1,6 +1,8 @@
 {
     "cc_configuration": {
-         "cache": 0
+         "cache": 0,
+         "allowViewer": true,
+         "allowSubscribeFromViewer": true
      },
     "ics1name": {
         "source":"",

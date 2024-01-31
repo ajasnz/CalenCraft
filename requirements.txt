@@ -3,3 +3,4 @@ regex~=2023.10.3
 sanitize_filename~=1.2.0
 flask~=3.0.0
 requests~=2.31.0
+recurring-ical-events~=2.1.2

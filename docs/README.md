@@ -6,6 +6,7 @@ CalenCraft is a basic flask application that can merge multiple ics links into o
 - Filters to include or exclude events based on keywords or regex
 - Ability to alter event properties before combining files
 - Ability to specify contexts for different views of the same calendar
+- Web based calendar viewer
 
 ## Setup
 
@@ -18,8 +19,8 @@ By default, the application will be accessible on port 8088.
 
 #### Global configuration
 Some configuration options can be set globally via environment variables, these are:
-- `cc_enable_contexts`: Whether to allow context-specific configuration files to be used. This should be set to `true` or `false` and defaults to `true`. Setting to false will disable all contexts, setting to true will only enable contexts if they are enabled in the configuration file. Contexts will only work if `cc_use_ics_path` is set to `true`.
-- `cc_enable_ics_path`: Whether to allow calendars to be accessed at https://example.com/ics/calendar if this is set to false, calendars will be accessible at https://example.com/calendar. This should be set to `true` or `false` and defaults to `true`. This is included for backwards compatibility with previous versions, disabling this may cause issues if a calendar config shares it's name with a defined path.
+- `cc_enable_non_ics_path`: Whether to allow calendars to be accessed at https://example.com/calendar if this is set to true, calendars will be accessible at https://example.com/calendar. This should be set to `true` or `false` and defaults to `false`. This is included for backwards compatibility with previous versions, enabling this may cause issues if a calendar config shares it's name with a defined path.
+- `cc_enable_caching`: Whether to enable caching of the combined ics file. This should be set to `true` or `false` and defaults to `false`
 
 
 ## Usage
@@ -36,16 +37,20 @@ Each calendar configuration is a .json file that tells CalenCraft how to merge a
 The first key in your configuration should be `cc_configuration`. This set tells CalenCraft about settings that apply to the configuration file and is mandatory.
 `cc_configuration` should contain the following key-value pairs:
 - `cache`: The number of minutes to cache the combined ics file for, this is optional and defaults to `0` (no caching). This speeds up the response time for clients but may cause issues if your source calendars are updated frequently.
-- ~~`cacheSource`: The number of minutes to cache the source calendars for, this is optional and defaults to `0` (no caching). This speeds up the response time for clients but may cause issues if your source calendars are updated frequently. If multiple calendars are using the same source URL this will only cache the source for the shortest time. ~~
 - `allowContext`: Whether to allow context-specific configuration files to be used. This should be set to `true` or `false` and defaults to `false`. Setting to false will disable all contexts and a request to a context will fail.
 - `allowNoContext`: Whether to allow requests without a context to be processed. This should be set to `true` or `false` and defaults to `false`. If set to `false` requests without a context will fail.
 - `defaultContext`: The name of the context to use if no context is specified in the request. The context specified here will be used for all requests without a context if `allowNoContext` is set to `false`
+- `allowedContexts`: A list of contexts that are allowed to be used. If anoter context is specified in the request and `allowNoContext` is set to `false` and `defaultContext` is not specified the request will fail.
+- `allowWeb`: Whether to allow the ICS to be viewed online via the web interface. This should be set to `true` or `false` and defaults to `false`. If set to `true` the calendar will be available at `yourserver.com/view/calendar`
 <pre><code>
     "cc_configuration": {
         "cache": int,
         "cacheSource": int,
+        "allowContext": bool,
         "allowNoContext": bool,
-        "defaultContext": "str"
+        "defaultContext": "str",
+        "allowedContexts": ["str", "str2", "str3"],
+        "allowWeb": bool
     }
 </code></pre>
 
@@ -110,7 +115,7 @@ If altering availability, set the property name to `availability` and include a 
 
 ##### Filtering events
 You can filter events before they are merged, this is done by adding an `filter` dictionary to the source calendar. This should contain a sub-dictionary for each property you want to filter on, the dictionary should be named either `exclude` or `include`.
-- `include` or `exclude`: These allow filtering of which events to include, an include filter will only include events that meet the specified critera, while an exclude filter will remove events that meet the criteria. Both filters currently only apply an **OR** logic. This dictionary should contain a sub-dictionary for each property you want to use as a filter
+- `include` or `exclude`: These allow filtering of which events to include, an include filter will only include events that meet the specified critera, while an exclude filter will remove events that meet the criteria. Both filters currently only apply an **OR** logic for filters of the same type. Ecludes will take priority over Includes. This dictionary should contain a sub-dictionary for each property you want to use as a filter
     - `property name`: The name of the property you want to check for filters, currently accepted values are `summary`, `description`, and `location`
         - `contains`: Check if the property contains the specified string
         - `equals`: Check if the property equals the specified string
@@ -130,17 +135,18 @@ If using contexts, you can specify different rules for each context by passing i
 ##### Altering events on a per-event basis
 Alterations can be made to an event based on rules and criteria the event must meet, rather than a blanket alteration for all events. This is done by adding an `alterRules` key to the source calendar. the `alterRules` should contain a list which contains a dictionary for each rule you want to apply. Each rule should contain the following keys:
 - `alterRules`: Allows for more complex alterations on a per-event basis. This should contain multiple sub-dictionaries with each criteria you want to match for to alter
-    - `property`: The property you want to match, currently accepted values are `summary`, `description`, and `location`
+    - `property`: The property you want to match, currently accepted values are `summary`, `description`, and `location`. You can also set this to `all` to apply rule to all events
     - `matchType`: How you want to match against the property, currently accepted values are `contains`, `equals`, and `regex`
     - `matchPattern`: The pattern or string to match against
     - `alter`: The alterations to make to the events that meet the criteria above. This should use the same syntax as the `alter` configurations above
-    - `context`: The name of a context, if set this rule will only apply to a specific context. See below for more information on contexts
+    - `context`: The name of a context, if set this rule will only apply to a specific context. See below for more information on contexts. Specify `*` to apply to all contexts
 <pre><code>
 "alterRules": [
     {
         "property": "",
         "matchType": "",
         "matchPattern": "",
+        "context": "",
         "alter": {
             
         }
@@ -152,22 +158,27 @@ Alterations can be made to an event based on rules and criteria the event must m
 Contexts allow the use of a single configuration with multiple views depending on who is looking at it (contexts are specified before the calendar id in the url). For example time off may show as busy if viewed from a work context, but free if viewed from a personal context.
 Contexts are currently only suupported for the following parts of a configuration: `alterRules`. Support for include and exclude filters will be added in a future version.
 
+## Viewer
+CalenCraft contains a basis calendar viewer which can be accessed by swapping `/ics/` in a calendar's URL to `/view/` e.g. `https://yoursever.com/view/calendar`.
 
 ## Possible URL formats
-- `https://example.com/calendar`: This format has been superceded by default, but can be enabked by setting the `cc_enable_ics_path` environment variable to `true`. This format does not support contexts, and will be removed in a future version.
+- `https://example.com/calendar`: This format has been superceded by default, but can be enabked by setting the `cc_enable_non_ics_path` environment variable to `true`. This format does not support contexts, and will be removed in a future version.
 - `https://example.com/ics/calendar`: This format is the default and will work for all configurations
-- ~~`https://example.com/ics/context/calendar`: This format will only work if contexts are enabled in the configuration file and the `cc_enable_contexts` environment variable is set to `true`~~
+- `https://example.com/ics/context/calendar`: This format will only work if contexts are enabled in the configuration file and the `cc_enable_contexts` environment variable is set to `true`
 
 ## Environment variables
 Some configuration options can be set globally via environment variables, these are:
-- `cc_enable_non_ics_path`: Whether to allow calendars to be accessed at https://example.com/calendar if this is set to true, calendars will be accessible at https://example.com/calendar. This should be set to `true` or `false` and defaults to `false`. This is included for backwards compatibility with previous versions, enabling this may cause issues if a calendar config shares it's name with a defined path.
-- `cc_enable_caching`: Whether to enable caching of the combined ics file. This should be set to `true` or `false` and defaults to `true`
+- `CC_ENABLE_NON_ICS_PATH`: Whether to allow calendars to be accessed at https://example.com/calendar if this is set to true, calendars will be accessible at https://example.com/calendar. This should be set to `true` or `false` and defaults to `false`. This is included for backwards compatibility with previous versions, enabling this may cause issues if a calendar config shares it's name with a defined path.
+- `CC_ENABLE_CACHING`: Whether to enable caching of the combined ics file. This should be set to `true` or `false` and defaults to `true`
+- `CC_BASE_URL`: The base URL for the application, this is used to generate links in the web interface. This should be set to the URL of the application e.g. `https://example.com`
 
 ## Caching
 CalenCraft currently supports basic caching of the combined ics file ON REQUESTS i.e. it currently only updates each calendar's cache when it is requested rather than on a schedule. This will work on frequently requested calendars with a longer cache time, but will mean little effect on calendars that are rarely requested. This will be improved in a future version.
 
-# Notes
+# Notes & Bugs
 - CalenCraft does not currently vaildate configuration files, if you get it wrong the program may behave unexpectedly.
+- Recurring events will only include the past 10 days and future 365 days. This will become customisable in the future
+- Some all day events do not render correctly
 
 
 # Roadmap
@@ -179,16 +190,20 @@ CalenCraft currently supports basic caching of the combined ics file ON REQUESTS
 - [x] Allow altering transparancy
 - [x] Allow altering free/busy type
 - [ ] Allow adding/updating config files via web
-- [ ] Add an ICS viewer
+- [x] Add an ICS viewer
 - [x] Add ability to specify alter rules on a per-event basis
-- [ ] Add env variables for configuration
+- [x] Add env variables for configuration
 - [ ] Better (or any) error handling
 - [x] Allow partial replaces in alter
 - [ ] Configuration generator
-- [ ] Improved web interface and security
-- [ ] Add ability to specify multiple contexts for a single calendar
+- [ ] Improved web interface
+- [x] Add ability to specify multiple contexts for a single calendar
 - [ ] Add context support for include/exclude
 - [ ] Add scheduled cache updates
 - [ ] Source calendar caching
+- [ ] Event Buffers
+- [ ] Show transparency in viewer
+- [ ] Allow customising the start and end of recurring events
+- [ ] Allow altering event start and end times
 
 
