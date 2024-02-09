@@ -1,4 +1,3 @@
-# FIXME check alter rule contains
 import json, requests
 from icalendar import Calendar, Event
 import regex as re
@@ -6,9 +5,11 @@ from sanitize_filename import sanitize
 import datetime
 import os, time, shelve
 import recurring_ical_events as rie
+from threading import Lock
 
 cacheDir = "./app/cache/"
 configDir = "./app/config/"
+threadLock = Lock()
 
 
 # main handler
@@ -172,31 +173,41 @@ def process_alter_rule(event, ruleset, context):
 
 
 def cache_ics(calId, context=None):
+    if not os.path.exists(cacheDir):
+        os.makedirs(cacheDir)
+        
     cacheFile = (
         cacheDir + context + calId + ".ics" if context else cacheDir + calId + ".ics"
     )
     icsContents = start_build(calId, context)
+    threadLock.acquire()
     with shelve.open(cacheFile) as cache:
         cache["icsContents"] = icsContents
         cache["lastUpdated"] = time.time()
-
+    threadLock.release()
 
 def get_cached_ics(calId, cacheTime, context=None, age=0):
     if age > 2:
         raise FileNotFoundError("Caught in cache loop ref=gcicl")
+    result = None
     cacheFile = (
         cacheDir + context + calId + ".ics" if context else cacheDir + calId + ".ics"
     )
-    with shelve.open(cacheFile) as cache:
-        if "icsContents" in cache and "lastUpdated" in cache:
-            if time.time() - cache["lastUpdated"] < cacheTime:
-                return cache["icsContents"]
-            else:
-                cache_ics(calId, context)
-                return get_cached_ics(calId, cacheTime, context, age + 1)
-        else:
-            cache_ics(calId, context)
-            return get_cached_ics(calId, cacheTime, context, age + 1)
+    threadLock.acquire()
+    try:
+        with shelve.open(cacheFile) as cache:
+            if "icsContents" in cache and "lastUpdated" in cache:
+                if time.time() - cache["lastUpdated"] < cacheTime:
+                    result = cache["icsContents"]
+    except FileNotFoundError:
+        pass
+    threadLock.release()
+    if result is not None:
+        return result
+    else:
+        cache_ics(calId, context)
+        return get_cached_ics(calId, cacheTime, context, age + 1)
+    
 
 
 def get_ics(calId, context=None, **kwargs):

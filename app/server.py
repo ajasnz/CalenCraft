@@ -52,7 +52,7 @@ def view_ics(calId, context=None):
         "calendarId": calId,
         "calendarContext": context,
         "allowSubscribe": True,
-        "calendarSubscribeLink": os.getenv("CC_BASE_URL") + "/ics/" + calendarPath
+        "calendarSubscribeLink": str(os.getenv("CC_BASE_URL")).replace("http://", "").replace("https://", "") + "/ics/" + calendarPath
     }
     return render_template("view.html", **pageData)
 
