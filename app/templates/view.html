@@ -15,13 +15,13 @@
 
 <body>
     <div class="container isLoading" id="pageContainer">
-        <header class="fullWidth" id="pageHeader">
+        <header class="fullWidth noKiosk" id="pageHeader">
             <h2>{{ calendarName }}</h2>
             {% if allowSubscribe  == True %}
-                <a id="calendarSubscribeButton" class="PeriodButton PeriodButtonRound" href="webcal://{{calendarSubscribeLink}}"><svg class="with-icon_icon__MHUeb" data-testid="geist-icon" fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24" style="color:var(--geist-foreground);width:24px;height:24px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>Subscribe</a>
+                <a id="calendarSubscribeButton"  href="{{calendarSubscribeLink}}"><svg class="with-icon_icon__MHUeb" data-testid="geist-icon" fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24" style="color:var(--geist-foreground);width:24px;height:24px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>Subscribe</a>
                 {% endif %}
         </header>
-            <nav class="fullWidth" id="calendarActions">
+            <nav class="fullWidth noKiosk" id="calendarActions">
                 <div class="calendarActionSet" id="calendarActionSetViews">
                     <button class="calendarActionChangeView" id="calendarActionChangeViewDay"
                         onclick="changeCalendarView('day', 'calendarActionChangeViewDay')" title="Day view">Day</button>

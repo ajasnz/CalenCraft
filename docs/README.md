@@ -161,6 +161,13 @@ Contexts are currently only suupported for the following parts of a configuratio
 ## Viewer
 CalenCraft contains a basis calendar viewer which can be accessed by swapping `/ics/` in a calendar's URL to `/view/` e.g. `https://yoursever.com/view/calendar`.
 
+### Viewer URL parameters
+When using the viewer you can pass parameters in the URL to alter the view of the calendar. These are:
+- `view`: The view to use, currently accepted values are `day`, `week`, `month`, and `agenda`. This defaults to `month`.
+- `displayMode`: set this to `kiosk` to hide the header and footer of the viewer
+- `viewDwell`: A number of seconds. If set the view will cycle through the views specified in the `autoViews` parameter every `viewDwell` seconds
+- `autoViews`: A list of views to cycle through if `viewDwell` is set (seperated by `-`)
+
 ## Possible URL formats
 - `https://example.com/calendar`: This format has been superceded by default, but can be enabked by setting the `cc_enable_non_ics_path` environment variable to `true`. This format does not support contexts, and will be removed in a future version.
 - `https://example.com/calendar`: This format has been superceded by default, but can be enabked by setting the `cc_enable_non_ics_path` environment variable to `true`. This format does not support contexts, and will be removed in a future version.

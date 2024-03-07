@@ -128,7 +128,7 @@ button{
   background-color: var(--secondary-color);
   color: var(--light-color);
 }
-.PeriodButton{
+#calendarSubscribeButton{
   width: auto;
   margin:0;
   background-color: inherit;
@@ -141,10 +141,29 @@ button{
   border-style: solid;
   border-width: 3px;
 }
+.PeriodButton{
+  width: auto;
+  margin:0;
+  background-color: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 1px;
+  border-color: var(--secondary-color);
+  border-style: solid;
+  border-width: 3px;
+  aspect-ratio: 1/1;
+}
+#calendarActionChangePeriodPrev{
+  border-radius: 1000px 100px 100px 1000px;
+}
+#calendarActionChangePeriodNext{
+  border-radius: 100px 1000px 1000px 100px;
+}
 .buttonPeriodIcon{
   position: relative;
   top: .1em;
-  padding:0px 5px;
+  padding:0px 0px;
   color: var(--secondary-color);
 }
 .PeriodButton:hover{

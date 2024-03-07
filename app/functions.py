@@ -67,7 +67,6 @@ def start_build(calId, context=None, **kwargs):
                 expandedEvents = rie.of(event).between(recurringStart, recurringEnd)
                 for thisEvent in expandedEvents:
                     mergeCal.add_component(thisEvent)
-                # mergeCal.add_component(event)
 
     if "format" in kwargs and kwargs["format"] == "tui":
         return format_tui(mergeCal, "calendar")
